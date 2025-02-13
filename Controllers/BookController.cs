@@ -20,11 +20,26 @@ namespace MyBookApp.Controllers
         }
 
         // GET: Book
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search)
         {
-            var bookDbContext = _context.Books.Include(b => b.User);
-            return View(await bookDbContext.ToListAsync());
+            var books = _context.Books.Include(b => b.User).AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                var searchLower = search.ToLower(); // Konvertera söksträngen till små bokstäver
+
+                books = books.Where(b =>
+                    b.Title.ToLower().Contains(searchLower) || // Titel (case-insensitive)
+                    b.User.FirstName.ToLower().Contains(searchLower) || // Förnamn (case-insensitive)
+                    b.User.LastName.ToLower().Contains(searchLower) // Efternamn (case-insensitive)
+                );
+            }
+
+            return View(await books.ToListAsync());
         }
+
+
+
 
         // GET: Book/Details/5
         public async Task<IActionResult> Details(int? id)

@@ -9,6 +9,11 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form asp-controller="Book" asp-action="Index" method="get">
+    <input type="text" name="search" placeholder="Sök efter bok eller användare..." value="@Context.Request.Query["search"]" />
+    <button type="submit">Sök</button>
+</form>
+
 <table class="table">
     <thead>
         <tr>
