@@ -11,8 +11,9 @@ public class BookModel
     public string? Author { get; set; }
     public string? Genre { get; set; }
     public int Pages { get; set; }
-    public Boolean Available { get; set; }
-    public string? Customer { get; set; }
-    public DateOnly? LoneDate { get; set; }
+    public DateOnly? LoanDate { get; set; }
+    public int UserId { get; set; }
+    public UserModel? User { get; set; } 
 
 }
+
