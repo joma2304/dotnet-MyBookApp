@@ -24,7 +24,7 @@ namespace MyBookApp.Controllers
         {
             var books = _context.Books.Include(b => b.User).AsQueryable();
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(search)) //Ifall sök-input är ifylld
             {
                 var searchLower = search.ToLower(); // Konvertera söksträngen till små bokstäver
 
@@ -37,8 +37,6 @@ namespace MyBookApp.Controllers
 
             return View(await books.ToListAsync());
         }
-
-
 
 
         // GET: Book/Details/5

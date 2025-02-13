@@ -29,3 +29,8 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.searchinput {
+  width: 80%;
+  max-width: 250px;
+}
