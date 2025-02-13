@@ -7,9 +7,9 @@ public class UserModel
     public int Id { get; set; }
 
     [Required]
-    public string? FristName { get; set; }
+    public string? FirstName { get; set; }
     [Required]
-    public string? Lastname { get; set; }
+    public string? LastName { get; set; }
 
     public ICollection<BookModel>? Books { get; set; }
 

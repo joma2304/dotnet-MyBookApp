@@ -48,9 +48,19 @@ namespace MyBookApp.Controllers
         // GET: Book/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FristName");
+            ViewData["UserId"] = new SelectList(
+                _context.Users.Select(u => new
+                {
+                    u.Id,
+                    FullName = u.FirstName + " " + u.LastName
+                }),
+                "Id",
+                "FullName"
+            );
+
             return View();
         }
+
 
         // POST: Book/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -65,7 +75,7 @@ namespace MyBookApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FristName", bookModel.UserId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FirstName", bookModel.UserId);
             return View(bookModel);
         }
 
@@ -82,9 +92,22 @@ namespace MyBookApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FristName", bookModel.UserId);
+
+            // Skapa en SelectList med fullständigt namn för varje användare
+            ViewData["UserId"] = new SelectList(
+                _context.Users.Select(u => new
+                {
+                    u.Id,
+                    FullName = u.FirstName + " " + u.LastName  // Kombinera FirstName och Lastname
+                }),
+                "Id",      // Id kommer vara det som skickas vid val
+                "FullName", // Visa FullName i dropdownlistan
+                bookModel.UserId // Förvalda värdet, alltså den nuvarande användaren som boken är kopplad till
+            );
+
             return View(bookModel);
         }
+
 
         // POST: Book/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -118,7 +141,7 @@ namespace MyBookApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FristName", bookModel.UserId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FirstName", bookModel.UserId);
             return View(bookModel);
         }
 
