@@ -4,6 +4,6 @@
 
 ### Databas lagrar böcker samt användare. 
 
-### CRUD funktionalitet för att läsa ut (även detaljer om enskild bok), lägga till, ändra samt ta bort böcker och användare finns. 
+### CRUD funktionalitet för att läsa ut (även detaljer om enskild), lägga till, ändra, samt ta bort böcker och användare finns. 
 
 ### Funktionalitet för att låna ut böcker till användare samt vilket datum detta görs finns. Användarens data sparas i en egen tabell i databasen. Sökfunktion är implementerad.  
