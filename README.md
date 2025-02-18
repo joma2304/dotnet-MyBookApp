@@ -1,4 +1,4 @@
-## Lösning moment 3 Entity Framework kurs DT2010G av Johan Magnusson (joma2304)
+## Lösning moment 3 Entity Framework kurs DT191G av Johan Magnusson (joma2304)
 
 ### Modeller, Controllers och Views är skapade för böcker samt användare. 
 
