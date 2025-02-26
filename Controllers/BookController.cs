@@ -22,22 +22,20 @@ namespace MyBookApp.Controllers
         // GET: Book
         public async Task<IActionResult> Index(string search)
         {
-            var books = _context.Books.Include(b => b.User).AsQueryable();
+            var books = _context.Books.AsQueryable(); // 
 
-            if (!string.IsNullOrEmpty(search)) //Ifall sök-input är ifylld
+            if (!string.IsNullOrEmpty(search)) // Ifall det finns någon input
             {
-                var searchLower = search.ToLower(); // Konvertera söksträngen till små bokstäver
+                var searchLower = search.ToLower(); // Så att både stora och små bokstäver fungerar
 
                 books = books.Where(b =>
-                    b.Title.ToLower().Contains(searchLower) || // Titel (case-insensitive)
-                    b.User.FirstName.ToLower().Contains(searchLower) || // Förnamn (case-insensitive)
-                    b.User.LastName.ToLower().Contains(searchLower) // Efternamn (case-insensitive)
+                    b.Title.ToLower().Contains(searchLower) ||  // Title
+                    b.Author.ToLower().Contains(searchLower)    // Författare
                 );
             }
 
             return View(await books.ToListAsync());
         }
-
 
         // GET: Book/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -48,7 +46,8 @@ namespace MyBookApp.Controllers
             }
 
             var bookModel = await _context.Books
-                .Include(b => b.User)
+                .Include(u => u.Loans!)       // Hämta Lån
+                .ThenInclude(l => l.User)    // Hämta User 
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (bookModel == null)
             {
@@ -61,26 +60,15 @@ namespace MyBookApp.Controllers
         // GET: Book/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(
-                _context.Users.Select(u => new
-                {
-                    u.Id,
-                    FullName = u.FirstName + " " + u.LastName
-                }),
-                "Id",
-                "FullName"
-            );
-
             return View();
         }
-
 
         // POST: Book/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Author,Genre,Pages,LoanDate,UserId")] BookModel bookModel)
+        public async Task<IActionResult> Create([Bind("Id,Title,Author,Genre,Pages")] BookModel bookModel)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +76,6 @@ namespace MyBookApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FirstName", bookModel.UserId);
             return View(bookModel);
         }
 
@@ -105,29 +92,15 @@ namespace MyBookApp.Controllers
             {
                 return NotFound();
             }
-
-            // Skapa en SelectList med fullständigt namn för varje användare
-            ViewData["UserId"] = new SelectList(
-                _context.Users.Select(u => new
-                {
-                    u.Id,
-                    FullName = u.FirstName + " " + u.LastName  // Kombinera FirstName och Lastname
-                }),
-                "Id",      // Id kommer vara det som skickas vid val
-                "FullName", // Visa FullName i dropdownlistan
-                bookModel.UserId // Förvalda värdet, alltså den nuvarande användaren som boken är kopplad till
-            );
-
             return View(bookModel);
         }
-
 
         // POST: Book/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Author,Genre,Pages,LoanDate,UserId")] BookModel bookModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Author,Genre,Pages")] BookModel bookModel)
         {
             if (id != bookModel.Id)
             {
@@ -154,7 +127,6 @@ namespace MyBookApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FirstName", bookModel.UserId);
             return View(bookModel);
         }
 
@@ -167,7 +139,6 @@ namespace MyBookApp.Controllers
             }
 
             var bookModel = await _context.Books
-                .Include(b => b.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (bookModel == null)
             {

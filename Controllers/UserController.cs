@@ -33,8 +33,12 @@ namespace MyBookApp.Controllers
                 return NotFound();
             }
 
-            var userModel = await _context.Users
+                var userModel = await _context.Users
+                .Include(u => u.Loans!)       // Hämta användarens lån
+                .ThenInclude(l => l.Book)    // Hämta boken för varje lån
                 .FirstOrDefaultAsync(m => m.Id == id);
+            
+
             if (userModel == null)
             {
                 return NotFound();

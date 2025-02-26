@@ -30,9 +30,6 @@ namespace MyBookApp.Migrations
                     b.Property<string>("Genre")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly?>("LoanDate")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Pages")
                         .HasColumnType("INTEGER");
 
@@ -40,14 +37,38 @@ namespace MyBookApp.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("UserModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserModelId");
+
+                    b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("MyBookApp.Models.LoanModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("BookId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateOnly>("LoanDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BookId");
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("Books");
+                    b.ToTable("Loans");
                 });
 
             modelBuilder.Entity("MyBookApp.Models.UserModel", b =>
@@ -71,16 +92,38 @@ namespace MyBookApp.Migrations
 
             modelBuilder.Entity("MyBookApp.Models.BookModel", b =>
                 {
-                    b.HasOne("MyBookApp.Models.UserModel", "User")
+                    b.HasOne("MyBookApp.Models.UserModel", null)
                         .WithMany("Books")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserModelId");
+                });
+
+            modelBuilder.Entity("MyBookApp.Models.LoanModel", b =>
+                {
+                    b.HasOne("MyBookApp.Models.BookModel", "Book")
+                        .WithMany("Loans")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MyBookApp.Models.UserModel", "User")
+                        .WithMany("Loans")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Book");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyBookApp.Models.BookModel", b =>
+                {
+                    b.Navigation("Loans");
                 });
 
             modelBuilder.Entity("MyBookApp.Models.UserModel", b =>
                 {
                     b.Navigation("Books");
+
+                    b.Navigation("Loans");
                 });
 #pragma warning restore 612, 618
         }
